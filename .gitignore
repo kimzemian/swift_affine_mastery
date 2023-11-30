@@ -1,0 +1,6 @@
+**/.DS_Store
+.ipynb_checkpoints
+mosek.lic
+**/__pycache__/
+ruff.toml
+.vscode
