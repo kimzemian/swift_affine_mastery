@@ -1,0 +1,10 @@
+[gp_controller]
+slack = "quadratic" #slack= none, constant, linear, quadratic
+beta = 0
+coef = 1e6
+
+[gp]
+name = "ad_rf"
+sgm = 1
+reg_param = 1
+rf_d = 0

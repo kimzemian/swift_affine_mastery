@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH -J <experiment name>
+#SBATCH -o <name of output file>%j.out
+#SBATCH -e <name of error file>%j.err
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=<netid>@cornell.edu
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --get-user-env
+# Job name
+# output file (%j expands to jobID)
+# error log file (%j expands to jobID)
+# Request status by email
+# Email address to send results to.
+# Total number of nodes requested
+# Total number of cores requested
+# retrieve the users login environment
+# #SBATCH --mem=2000
+#SBATCH -t :00:00
+#SBATCH --partition=
+/home/<netid>/<...file location...>/<file name>.sh
+# server memory requested (per node)
+# Time limit (hh:mm:ss)
+# Request partition
+# Type/number of GPUs needed

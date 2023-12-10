@@ -66,13 +66,16 @@ class ADPRandomFeatures(GaussianProcess):
         return self.cphi @ self.cphi.T
 
     def mean_var(self, x_test):  # n_t=1
+        tic = timeit.default_timer()
         self.phi_test = self._compute_phi(x_test)  # (n_t,s)
         rest = np.reshape(
-            self.inv_cphi @ self.cphi.T @ self.z_train, (self.rf_d, -1)
+            self.inv_cphi @ self.cphi.T @ self.z_train, (self.rf_d, -1), order="F"
         )  # (rf_d,m+1)
         meanvar = np.einsum(
             "ij,ji->i", self.phi_test.reshape((self.m + 1, -1)), rest
         )  # (m+1)
+        toc = timeit.default_timer()
+        self.meanvar_time = toc - tic
         # y @  meanvar
         return meanvar
 

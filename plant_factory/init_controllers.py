@@ -31,7 +31,7 @@ def init_oracle_controller(plant):
         plant.system.fb_lin = FBLinController(plant.system, lqr)
         plant.oracle_controller = QPController.build_care(plant.system, Q, R)
         plant.oracle_controller.add_regularizer(plant.system.fb_lin, 25)
-        # self.oracle_controller.add_static_cost(100* np.identity(2))
+        plant.oracle_controller.add_static_cost(np.identity(2))
         plant.oracle_controller.add_stability_constraint(
             plant.system.lyap,
             comp=lambda r: plant.system.alpha * r,
@@ -41,7 +41,7 @@ def init_oracle_controller(plant):
     plant.oracle_controller.name = "oracle_controller"
 
 
-def init_qp_controller(plant):  # FIXME update hard coded params with self.nominal params
+def init_qp_controller(plant):
     """Initialize QP controller."""
     if plant.m == 1:
         plant.system_est.lyap = AffineQuadCLF.build_care(

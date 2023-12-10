@@ -7,12 +7,16 @@ from gp_factory.init_gp import init_trained_gp
 from swift_control.init_gpc import init_gpcontroller
 
 
-def train_episodic(plant, model_path, x_0):
+def train_episodic(plant, model_path, x_0, warm_start=False, data=None):
     """Episodically train data driven controllers."""
-    xs, ys, zs = training_data_gen(
+    if warm_start:
+        xs, ys, zs = data
+    else:
+        xs, ys, zs = training_data_gen(
         plant, plant.qp_controller, x_0, plant.episodic_T, plant.episodic_num_steps
-    )
-    data = xs, ys, zs
+        )
+        data = xs, ys, zs
+
     gp = init_trained_gp(model_path, data)
     print(gp.name)
     gp_controller = init_gpcontroller(plant, gp)

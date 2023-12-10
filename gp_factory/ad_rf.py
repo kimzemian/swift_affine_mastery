@@ -67,10 +67,13 @@ class ADRandomFeatures(GaussianProcess):
         return self.phi @ self.phi.T
 
     def mean_var(self, x_test):  # n_t=1
+        tic = timeit.default_timer()
         self.prephi_test = self._prephi(x_test).squeeze(axis=0)  # (rf_d,m+1)
         meanvar = (
             self.prephi_test.T @ self.inv_phi @ self.phi.T @ self.z_train
         )  # (n_t,1)
+        toc = timeit.default_timer()
+        self.meanvar_time = toc - tic
         # y @ meanvar
         return meanvar
 

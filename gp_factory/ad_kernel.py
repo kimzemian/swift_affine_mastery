@@ -89,10 +89,11 @@ class ADKernel(GaussianProcess):
         )
 
     def mean_var(self, x_test):  # n_t=1
-        # pre_k_h = self._compute_kernel_helper(x_test) #(n,n_t)
-        # self.k_h = pre_k_h * np.sum(self.y_train, 1, keepdims=True) @ np.ones((1,self.m+1))  #(n,m+1)
+        tic = timeit.default_timer()
         self._compute_k_h(x_test)
         meanvar = self.z_train @ self.inv_kernel @ self.k_h  # m+1
+        toc = timeit.default_timer()
+        self.meanvar_time = toc - tic
         return meanvar.T  # y @ meanvar
 
     def sigma_var(self):  # n_t=1

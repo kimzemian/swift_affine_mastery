@@ -23,6 +23,9 @@ class GaussianProcess():
         self.mu = 0
         self.rf_mu = np.zeros(self.d)
         self.rf_cov = np.identity(self.d)  # gives fourier transform of the RBF kernel
+        self.training_time = 0
+        self.test_time = 0
+        self.meanvar_time = 0
 
 
     def _set_config(self, path):

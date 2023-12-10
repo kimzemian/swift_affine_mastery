@@ -45,10 +45,13 @@ def create_grid_data(plant, T=None, num_steps=None, data_gen=training_data_gen):
     run a grid of initial points with nominal controller for several steps
     """
     initial_x0s = (
-        np.mgrid[0.1 : np.pi : 1, -1:1.1:0.4, 0 : np.pi : 1, -1:1.1:0.4]
+        # np.mgrid[0.1 : np.pi : 1, -1:1.1:0.4, 0 : np.pi : 1, -1:1.1:0.4]
+        # .reshape(4, -1)
+        # .T
+        np.mgrid[0.1 : np.pi : 1.5, 0 : np.pi : 1.5, -1:1.1:0.5,  -1:1.1:0.5]
         .reshape(4, -1)
         .T
-    )
+    ) #225 points
     for i, x_0 in enumerate(initial_x0s):
         if i == 0:
             xs, ys, zs = data_gen(
