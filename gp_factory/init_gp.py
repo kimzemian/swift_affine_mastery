@@ -9,6 +9,7 @@ from gp_factory import (
     ADRandomFeatures,
     ADPKernel,
     ADPRandomFeatures,
+    VanillaKernel,
 )
 
 
@@ -21,6 +22,7 @@ def init_trained_gp(path, data, seed=42, given_rf_d=None):
         ADPRandomFeatures.name: ADPRandomFeatures,
         ADKernel.name: ADKernel,
         ADPKernel.name: ADPKernel,
+        VanillaKernel.name: VanillaKernel,
     }
     # get config data
     conf = load_config(path)["gp"]

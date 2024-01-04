@@ -1,4 +1,0 @@
-gp_factory
-plant_factory
-plotter
-swift_control

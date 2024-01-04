@@ -6,7 +6,6 @@ from swift_control.data import (
 from swift_control.eval import eval_cs
 from swift_control.train import train_episodic
 from plant_factory import ControllerFactory
-from swift_control.util import save_model
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -14,16 +13,21 @@ import time
 import mosek
 
 def plotit(ts, qp_cs, oracle_cs, gp_cs, names, c_cdot, plot_path, x_test):
+    ts = np.tile(ts, 10)
     sns.lineplot(
         x=ts,
-        y=qp_cs[c_cdot],
+        y=qp_cs[:,c_cdot,:].flatten("F"),
+        estimator=np.median,
+        errorbar=lambda x: (np.quantile(x, 0.25), np.quantile(x, 0.75)),,
         linestyle="dotted",
         color="black",
         label="qp_controller",
     )
     sns.lineplot(
         x=ts,
-        y=oracle_cs[c_cdot],
+        y=oracle_cs[:,c_cdot,:].flatten("F"),
+        estimator=np.median,
+        errorbar=lambda x: (np.quantile(x, 0.25), np.quantile(x, 0.75)),
         linestyle="dashdot",
         color="black",
         label="oracle_controller",
@@ -31,7 +35,9 @@ def plotit(ts, qp_cs, oracle_cs, gp_cs, names, c_cdot, plot_path, x_test):
     for model_cs, name in zip(gp_cs, names):
         sns.lineplot(
             x=ts,
-            y=model_cs[c_cdot],
+            y=model_cs[:,c_cdot,:].flatten("F"),
+            estimator=np.median,
+            errorbar=lambda x: (np.quantile(x, 0.25), np.quantile(x, 0.75)),
             label=name,
             alpha=0.5,
         )
@@ -48,34 +54,44 @@ swift_path = "/share/dean/fast_control/models/swift_grid/"
 plant_conf = swift_path + "base_config.toml"
 grid_path = swift_path + "grid_225_100_steps.npz"
 plot_path = swift_path + "warm_episodic/"
-x_0 = np.array([2.0, 0.0, 0.0, 0.0])
+
+x_0s = np.random.rand((10,4))
+x_0s = x_0s[:,:2] * np.pi
+print(x_0s)
 
 plant = ControllerFactory(plant_conf)
-kwargs = x_0, plant.episodic_T, plant.episodic_num_steps
-
-oracle_cs, ts = eval_cs(plant.system, plant.oracle_controller, *kwargs)
-qp_cs, _ = eval_cs(plant.system, plant.qp_controller, *kwargs)
-
+args = plant.episodic_T, plant.episodic_num_steps
 
 confs = []
-gps = []
+gp_controller_pair = []
 gp_cs = []
 names = []
 train_time = []
+model_cs =np.empty(len(x_0s), 2, len(ts))
+oracle_cs = np.empty(len(x_0s), 2,  len(ts))
+qp_cs = np.empty(len(x_0s), 2,  len(ts))
+
+for idx,x_0 in enumerate(x_0s):
+    oracle_cs[idx,:,:], ts = eval_cs(plant.system, plant.oracle_controller, *kwargs)
+    qp_cs[idx,:, :], _ = eval_cs(plant.system, plant.qp_controller, *kwargs)
+
+
+
 
 for i in range(1,5):
     model_conf = swift_path + f"m{i}_config.toml"
     xs, ys, zs = np.load(grid_path).values()
     data = xs[::5],ys[::5],zs[::5]
     gp_controller, gp = train_episodic(plant, model_conf, x_0, warm_start=True, data=data)
-    model_cs, _ = eval_cs(plant.system, gp_controller, *kwargs)
-
     confs.append(model_conf)
-    gps.append(gp)
-    gp_cs.append(model_cs)
+    gp_controller_pair.append((gp_controller, gp))
     names.append(gp_controller.name)
 
-save_model(gps, swift_path + "gps.pkl")
+    for idx,x_0 in enumerate(x_0s):
+        model_cs[idx,:,:], _ = eval_cs(plant.system, gp_controller, x_0, *args)
+        gp_cs.append(model_cs)
+
+
 np.save(plot_path+'qp_cs.npy', qp_cs)
 np.save(plot_path+'oracle_cs.npy', oracle_cs)
 np.save(plot_path+'gp_cs.npy', gp_cs)

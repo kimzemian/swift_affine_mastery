@@ -15,5 +15,4 @@ cd core; python setup.py develop
 cd swift_affine_mastery; python -e setup.py
 ```
 ## Usage
-
-episodic usage
+example at test folder

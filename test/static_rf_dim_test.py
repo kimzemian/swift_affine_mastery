@@ -11,7 +11,7 @@ def load_and_split_data(data_path):
     grid_data = np.load(data_path + "grid_225_100_steps.npz")
     xs, ys, zs = grid_data["xs"], grid_data["ys"], grid_data["zs"]
     # smaller dataset
-    xs, ys, zs =xs[::2],ys[::2],zs[::2]
+    # xs, ys, zs =xs[::2],ys[::2],zs[::2]
     x_train, x_test, y_train, y_test, z_train, z_test = train_test_split(
         np.asarray(xs), np.asarray(ys), np.asarray(zs), test_size=0.20, shuffle=True
     )
@@ -98,17 +98,17 @@ if __name__ == "__main__":
                 test_time[i, num, idx] = gp.test_time
                 rmse[i, num, idx] = mean_squared_error(z_test, z_pred, squared=False)
                 # mae[i, num, idx] = mean_absolute_error(z_test, z_pred)
-        np.save(static_path + "medium/static_tests_rmse_grid.npy", rmse)
-        np.save(static_path + "medium/static_tests_train_time_grid.npy", train_time)
-        np.save(static_path + "medium/static_tests_test_time_grid.npy", test_time)
+        np.save(static_path + "forget/static_tests_rmse_grid.npy", rmse)
+        np.save(static_path + "forget/static_tests_train_time_grid.npy", train_time)
+        np.save(static_path + "forget/static_tests_test_time_grid.npy", test_time)
 
 
 
     train_time = train_time.mean(axis=2)
     test_time = test_time.mean(axis=2)
-    np.save(static_path + "medium/static_tests_rmse_grid.npy", rmse)
-    np.save(static_path + "medium/static_tests_mae_grid.npy", mae)
-    np.save(static_path + "medium/static_tests_train_time_grid.npy", train_time)
-    np.save(static_path + "medium/static_tests_test_time_grid.npy", test_time)
+    np.save(static_path + "forget/static_tests_rmse_grid.npy", rmse)
+    np.save(static_path + "forget/static_tests_mae_grid.npy", mae)
+    np.save(static_path + "forget/static_tests_train_time_grid.npy", train_time)
+    np.save(static_path + "forget/static_tests_test_time_grid.npy", test_time)
     plot(rmse, "rmse", train_time, test_time, names)
     # plot(mae, "mae", train_time, test_time, names)

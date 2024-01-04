@@ -4,7 +4,7 @@ beta = 0
 coef = 1e6
 
 [gp]
-name = "adp_rf"
+name = "ad_rf"
 sgm = 1
-reg_param = 0.1
+reg_param = 1
 rf_d = 0

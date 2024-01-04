@@ -1,0 +1,19 @@
+[system]
+sys_params = [0.6, 0.6, 0.6, 0.6]
+sys_est_params = [1, 1, 1, 1]
+m = 2
+
+[grid]
+T = 5
+num_steps = 50
+
+[episodic]
+T = 10
+num_steps = 100
+x_0 = [2.0, 0.0, 0.0, 0.0]
+epochs = 10
+
+[nominal_controller]
+static_cost = 1
+coef = 1e6
+regularizer = 25 
